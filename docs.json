@@ -1,55 +1,40 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Mint Starter Kit",
+  "theme": "maple",
+  "name": "PayLink",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#000000",
+    "light": "#ffffff",
+    "dark": "#000000"
   },
+  "description": "PayLink is an open-source framework designed to simplify payment integrations for AI agents by leveraging the Model Context Protocol (MCP). It provides a standardized interface for various payment providers, including M-Pesa and Airtel enabling seamless and rapid integration of payment functionalities into your AI agents.",
   "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "User Guides",
         "groups": [
           {
             "group": "Get Started",
             "pages": [
-              "index",
-              "quickstart",
-              "development"
+              "get-started/introduction",
+              "get-started/quickstart"
             ]
           },
           {
-            "group": "Essentials",
+            "group": "Integration Guides",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/settings",
-              "essentials/navigation",
-              "essentials/reusable-snippets"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "API Reference",
-        "groups": [
-          {
-            "group": "API Documentation",
-            "pages": [
-              "api-reference/introduction"
+              "integration-guides/openai",
+              "integration-guides/langchain",
+              "integration-guides/custom-tools"
             ]
           },
           {
-            "group": "Endpoint Examples",
+            "group": "Development",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "development/whats-new",
+              "development/roadmap",
+              "development/contributing"
             ]
           }
         ]
@@ -58,27 +43,14 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Community",
-          "href": "https://mintlify.com/community",
-          "icon": "slack"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "Python SDK",
+          "href": "https://github.com/jameskanyiri/paylink_sdk",
+          "icon": "python"
         }
       ]
     }
   },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
+ 
   "navbar": {
     "links": [
       {

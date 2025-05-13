@@ -1,0 +1,112 @@
+---
+title: 'Quickstart'
+description: 'Get started with PayLink SDK quickly'
+---
+
+# PayLink SDK Quickstart
+
+This quickstart guide will help you get up and running with the PayLink SDK in just a few minutes.
+
+## Prerequisites
+
+- Python 3.8 or higher
+
+## Step 1: Install the SDK
+
+First, install the PayLink SDK:
+
+```bash
+pip install paylink-sdk
+```
+
+## Step 2: Set Up a Basic Client
+
+Create a simple Python script to connect to the PayLink server:
+
+```python
+import asyncio
+from paylink_sdk import PayLinkClient
+
+async def main():
+    # Initialize the client
+    # Replace with your server URL if not using the default
+    client = PayLinkClient()
+    
+    # List available tools
+    tools = await client.list_tools()
+    print(f"Available tools: {[tool.name for tool in tools]}")
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+Run this script to verify your connection to the server:
+
+```bash
+python quickstart.py
+```
+
+## Step 3: Process a Payment
+
+Now, let's process a simple payment:
+
+```python
+import asyncio
+from paylink_sdk import PayLinkClient
+
+async def process_payment():
+    client = PayLinkClient()
+    
+    # Process a payment
+    result = await client.call_tool("stk_push", {
+        "phone_number": "2547123456789",
+        "amount": 1,
+        "account_reference": "invoice",
+        "transaction_desc": "invoice-123",
+        "transaction_type": "CustomerBuyGoodsOnline",
+    })
+    return result
+
+if __name__ == "__main__":
+    asyncio.run(process_payment())
+```
+
+## Step 3: Check Payment Status
+
+Once you've processed a payment, you can check its status:
+
+```python
+import asyncio
+from paylink_sdk import PayLinkClient
+
+async def check_payment_status(transaction_id):
+    client = PayLinkClient()
+    
+    # Check payment status
+    status = await client.call_tool("stk_push_status", {
+        "checkout_request_id": transaction_id
+    })
+    
+    print(status)
+    return status
+
+if __name__ == "__main__":
+    # Replace with your transaction ID
+    asyncio.run(check_payment_status("ws_CO_12052025033128264797357665"))
+```
+
+## Next Steps
+
+Now that you've set up your first PayLink integration, you can:
+
+<CardGroup cols={3}>
+  <Card title="Explore Examples" icon="code" href="/get-started/example-clients">
+    See more example implementations
+  </Card>
+  <Card title="Framework Integration" icon="puzzle-piece" href="/tutorials/integration-openai">
+    Integrate with AI frameworks
+  </Card>
+  <Card title="Learn Concepts" icon="lightbulb" href="/concepts/core-architecture">
+    Understand the core architecture
+  </Card>
+</CardGroup>
