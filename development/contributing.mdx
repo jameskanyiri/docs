@@ -1,0 +1,179 @@
+---
+title: "Contributing"
+description: "How to contribute to the PayLink project"
+---
+
+# Contributing to PayLink
+
+Thank you for your interest in contributing to PayLink! This guide will help you get started with contributing to our open-source project.
+
+## Ways to Contribute
+
+There are many ways to contribute to PayLink:
+
+- **Code contributions**: Fix bugs, add features, improve performance
+- **Documentation**: Improve existing docs, add examples, fix typos
+- **Bug reports**: Submit detailed bug reports when you encounter issues
+- **Feature requests**: Suggest new features or improvements
+- **Testing**: Help test new features and ensure quality
+- **Community support**: Help answer questions from other users
+
+## Getting Started
+
+### Prerequisites
+
+- Python 3.8 or higher
+- Git
+- A GitHub account
+
+### Setting Up Your Development Environment
+
+1. **Fork the repository**
+
+   Visit [https://github.com/jameskanyiri/paylink_sdk](https://github.com/jameskanyiri/paylink_sdk) and click the "Fork" button in the top-right corner.
+
+2. **Clone your fork**
+
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/paylink_sdk.git
+   cd paylink_sdk
+   ```
+
+3. **Set up a virtual environment**
+
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+4. **Install development dependencies**
+
+   ```bash
+   pip install -e ".[dev]"
+   ```
+
+5. **Set up pre-commit hooks**
+
+   ```bash
+   pre-commit install
+   ```
+
+### Development Workflow
+
+1. **Create a new branch**
+
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+   Use a descriptive branch name, such as:
+   - `feature/airtel-integration`
+   - `fix/connection-timeout`
+   - `docs/improve-examples`
+
+2. **Make your changes**
+
+   Write your code or documentation changes.
+
+3. **Run tests**
+
+   ```bash
+   pytest
+   ```
+
+4. **Commit your changes**
+
+   ```bash
+   git add .
+   git commit -m "Your detailed commit message"
+   ```
+
+   Follow our commit message format:
+   - Use the present tense ("Add feature" not "Added feature")
+   - Use the imperative mood ("Move cursor to..." not "Moves cursor to...")
+   - Start with a capital letter
+   - No dot (.) at the end
+   - Reference issues and pull requests liberally
+
+5. **Push your changes**
+
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+
+6. **Submit a pull request**
+
+   Go to your repository on GitHub and click "Compare & pull request".
+
+## Code Style and Guidelines
+
+PayLink follows these coding standards:
+
+- **PEP 8**: We follow the [PEP 8](https://www.python.org/dev/peps/pep-0008/) style guide for Python code
+- **Type hints**: Use type hints for function parameters and return values
+- **Docstrings**: Document classes and functions using Google-style docstrings
+- **Tests**: Include tests for new features and bug fixes
+
+We use the following tools to enforce our coding standards:
+
+- **Black**: For code formatting
+- **isort**: For import sorting
+- **Flake8**: For linting
+- **MyPy**: For type checking
+
+## Documentation Guidelines
+
+When contributing to documentation:
+
+- Use clear, concise language
+- Include code examples when applicable
+- Follow Markdown best practices
+- Update or add docstrings for any code changes
+- Add new pages to the navigation in `docs.json` if needed
+
+## Testing Guidelines
+
+When adding new features or fixing bugs:
+
+- Add unit tests for new functionality
+- Ensure all tests pass before submitting a pull request
+- Include integration tests for complex features
+- Document test cases clearly
+
+## Pull Request Process
+
+1. Ensure your PR addresses a specific issue or clearly describes the improvement
+2. Update documentation as necessary
+3. Add tests for new features
+4. Ensure CI checks pass
+5. Request a review from maintainers
+6. Address feedback and make requested changes
+7. Once approved, a maintainer will merge your PR
+
+## Issue Reporting
+
+When reporting issues:
+
+1. Use the provided issue template
+2. Include detailed steps to reproduce the issue
+3. Describe the expected and actual behavior
+4. Include relevant logs and error messages
+5. Specify your environment (OS, Python version, etc.)
+
+## Code of Conduct
+
+By participating in this project, you agree to abide by our [Code of Conduct](https://github.com/jameskanyiri/paylink_sdk/blob/main/CODE_OF_CONDUCT.md). Please report unacceptable behavior to [jmskanyiri@gmail.com](mailto:jmskanyiri@gmail.com).
+
+## License
+
+By contributing to PayLink, you agree that your contributions will be licensed under the project's [MIT License](https://github.com/jameskanyiri/paylink_sdk/blob/main/LICENSE).
+
+## Questions?
+
+If you have any questions about contributing, please:
+
+- Open an issue on GitHub
+- Email us at [jmskanyiri@gmail.com](mailto:jmskanyiri@gmail.com)
+- Join our community discussions
+
+Thank you for contributing to PayLink! Your efforts help make mobile payments more accessible for AI agents and developers around the world.

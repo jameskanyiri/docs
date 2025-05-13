@@ -31,8 +31,7 @@
             "group": "Development",
             "pages": [
               "development/whats-new",
-              "development/roadmap",
-              "development/contributing"
+              "development/roadmap"
             ]
           }
         ]
