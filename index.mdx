@@ -1,71 +1,56 @@
 ---
-title: Hello
-description: "Welcome to the home of your new documentation"
+title: 'Introduction '
+description: 'Overview of the PayLink SDK for MCP tool integration'
 ---
 
-<img
-  className="block dark:hidden"
-  src="/images/hero-light.png"
-  alt="Hero Light"
-/>
-<img
-  className="hidden dark:block"
-  src="/images/hero-dark.png"
-  alt="Hero Dark"
-/>
 
-## Setting up
+## What is PayLink?
 
-The first step to world-class documentation is setting up your editing environments.
+PayLink is an open-source framework designed to simplify payment integrations for AI agents by leveraging the Model Context Protocol (MCP). It provides a standardized interface for various payment providers, including M-Pesa and Airtel, enabling seamless integration of payment functionalities into your AI applications.
 
-<CardGroup cols={2}>
-  <Card
-    title="Edit Your Docs"
-    icon="pen-to-square"
-    href="https://mintlify.com/docs/quickstart"
-  >
-    Get your docs set up locally for easy development
+
+## How It Works
+
+PayLink SDK connects to a PayLink MCP server via Server-Sent Events (SSE), allowing your application to:
+
+1. **Discover available payment tools** on the server
+2. **Call payment tools** with appropriate arguments
+3. **Process payment results** from the tools
+
+The SDK handles all the communication details, so you can focus on integrating payment functionality into your application.
+
+## Architecture Overview
+
+The PayLink ecosystem consists of three main components:
+
+1. **PayLink Server**: Hosts payment tools and connects to payment providers
+2. **PayLink SDK**: Client libraries for connecting to the server
+3. **Payment Providers**: External services like M-Pesa, Airtel, etc.
+
+## Available SDK Clients
+
+<CardGroup cols={3}>
+  <Card title="Python" icon="python" href="/sdk/python">
+    For Python applications and AI frameworks
   </Card>
-  <Card
-    title="Preview Changes"
-    icon="image"
-    href="https://mintlify.com/docs/development"
-  >
-    Preview your changes before you push to make sure they're perfect
-  </Card>
+
 </CardGroup>
 
-## Make it yours
+## Framework Integrations
 
-Update your docs to your brand and add valuable content for the best user conversion.
+The SDK provides specialized adapters for popular AI frameworks:
+
+- **OpenAI Compatible**: Use with OpenAI function calling
+- **LangChain Compatible**: Use with LangChain agents
+- **Base MCP Client**: For direct integration with any MCP-compatible system
+
+## Next Steps
 
 <CardGroup cols={2}>
-  <Card
-    title="Customize Style"
-    icon="palette"
-    href="https://mintlify.com/docs/settings/global"
-  >
-    Customize your docs to your company's colors and brands
+  <Card title="Quick Start" icon="play" href="/get-started/quickstart">
+    Get up and running with a simple example
   </Card>
-  <Card
-    title="Reference APIs"
-    icon="code"
-    href="https://mintlify.com/docs/api-playground/openapi"
-  >
-    Automatically generate endpoints from an OpenAPI spec
-  </Card>
-  <Card
-    title="Add Components"
-    icon="screwdriver-wrench"
-    href="https://mintlify.com/docs/content/components/accordions"
-  >
-    Build interactive features and designs to guide your users
-  </Card>
-  <Card
-    title="Get Inspiration"
-    icon="stars"
-    href="https://mintlify.com/customers"
-  >
-    Check out our showcase of our favorite documentation
+  <Card title="Python SDK" icon="python" href="/sdk/python">
+    Explore the Python SDK
   </Card>
 </CardGroup>
