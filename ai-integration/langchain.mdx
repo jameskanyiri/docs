@@ -1,0 +1,303 @@
+---
+title: 'LangChain Integration'
+description: 'Integrate PayLink with LangChain for payment-enabled AI agents'
+---
+
+# LangChain Integration
+
+This guide demonstrates how to integrate PayLink with LangChain to create AI agents that can process payments as part of their workflows. The integration uses PayLink's LangChain adapter, which formats PayLink tools to be compatible with LangChain's tools API.
+
+## Prerequisites
+
+Before you begin, make sure you have:
+
+- Installed the PayLink SDK
+- Installed LangChain
+- Access to a PayLink server with payment tools
+- An OpenAI API key (or other supported LLM provider)
+
+## Installation
+
+Install the required packages:
+
+```bash
+pip install paylink-sdk langchain langchain-openai
+```
+
+## Basic Integration
+
+### Step 1: Initialize the PayLink Client
+
+First, initialize the PayLink client using the LangChain adapter:
+
+```python
+from paylink_sdk.langchain_adapter.toolkit import PayLinkClient
+
+# Initialize the client
+paylink_client = PayLinkClient()
+
+# List available tools in LangChain-compatible format
+tools = await paylink_client.list_tools()
+```
+
+The `PayLinkClient` from the `langchain_adapter.toolkit` module automatically formats PayLink tools in a way that's compatible with LangChain's tools API.
+
+### Step 2: Set Up LangChain LLM
+
+Initialize a language model from LangChain:
+
+```python
+from langchain_openai import ChatOpenAI
+
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+```
+
+### Step 3: Bind the Tools to the LLM
+
+Bind the PayLink tools to the language model:
+
+```python
+llm_with_tools = llm.bind_tools(tools=tools)
+```
+
+### Step 4: Invoke the LLM with a Payment Request
+
+Send a payment request to the LLM:
+
+```python
+response = llm_with_tools.invoke("Initiate an stk push to 2547123456789 amount is 1ksh account reference invoice, transaction description invoice-123, transaction type CustomerBuyGoodsOnline")
+```
+
+The LLM will generate a tool call to the appropriate PayLink function.
+
+### Step 5: Execute the PayLink Tool
+
+Extract the tool name and arguments from the LLM response, then call the PayLink tool:
+
+```python
+# Extract tool name and arguments from the response
+# (This will depend on your specific implementation)
+name = "stk_push"  # The tool name from the response
+args = {
+    "phone_number": "2547123456789",
+    "amount": 1,
+    "account_reference": "invoice",
+    "transaction_desc": "invoice-123",
+    "transaction_type": "CustomerBuyGoodsOnline",
+}
+
+# Call the PayLink tool
+result = await paylink_client.call_tool(name, args)
+
+# View the result
+print(result)
+```
+
+## Complete Example
+
+Here's a complete example showing how to create a payment-enabled agent using LangChain and PayLink:
+
+```python
+import asyncio
+import json
+from langchain_openai import ChatOpenAI
+from langchain.agents import create_openai_functions_agent
+from langchain.agents import AgentExecutor
+from langchain.prompts import ChatPromptTemplate
+from paylink_sdk.langchain_adapter.toolkit import PayLinkClient
+
+async def run_payment_agent():
+    # Initialize the PayLink client
+    paylink_client = PayLinkClient()
+    
+    # Get PayLink tools in LangChain format
+    tools = await paylink_client.list_tools()
+    
+    # Initialize the LLM
+    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+    
+    # Create a prompt for the agent
+    prompt = ChatPromptTemplate.from_messages([
+        ("system", "You are a helpful assistant that can process mobile money payments when requested."),
+        ("human", "{input}")
+    ])
+    
+    # Create an agent
+    agent = create_openai_functions_agent(llm, tools, prompt)
+    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+    
+    # Define a custom tool executor that uses PayLink
+    async def _handle_tool_call(tool_name, tool_input):
+        # Parse the tool input
+        if isinstance(tool_input, str):
+            try:
+                tool_input = json.loads(tool_input)
+            except json.JSONDecodeError:
+                # If it's not valid JSON, pass it as is
+                pass
+                
+        # Call the PayLink tool
+        return await paylink_client.call_tool(tool_name, tool_input)
+    
+    # Override the agent executor's _call_tool method
+    original_call_tool = agent_executor._call_tool
+    
+    async def custom_call_tool(tool_name, tool_input):
+        if tool_name in [tool.name for tool in tools]:
+            return await _handle_tool_call(tool_name, tool_input)
+        else:
+            return await original_call_tool(tool_name, tool_input)
+    
+    agent_executor._call_tool = custom_call_tool
+    
+    # Process a payment request
+    user_input = "I want to pay 1 KES from my phone number 2547123456789 for invoice number 123."
+    result = await agent_executor.ainvoke({"input": user_input})
+    
+    return result
+
+if __name__ == "__main__":
+    result = asyncio.run(run_payment_agent())
+    print(result)
+```
+
+## Using PayLink with LangChain Agents
+
+LangChain offers different types of agents. Here's how to use PayLink with some common agent types:
+
+### OpenAI Functions Agent
+
+The OpenAI Functions agent is the easiest to integrate with PayLink:
+
+```python
+from langchain.agents import AgentType, initialize_agent
+
+# Initialize the LLM
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+
+# Create the agent
+agent = initialize_agent(
+    tools=tools,
+    llm=llm,
+    agent=AgentType.OPENAI_FUNCTIONS,
+    verbose=True
+)
+```
+
+### ReAct Agent
+
+For the ReAct agent pattern:
+
+```python
+from langchain.agents import AgentType, initialize_agent
+
+# Initialize the LLM
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+
+# Create the agent
+agent = initialize_agent(
+    tools=tools,
+    llm=llm,
+    agent=AgentType.REACT_DOCSTORE,
+    verbose=True
+)
+```
+
+## Creating a Chat Interface
+
+Here's an example of a simple chat interface that can process payments using PayLink and LangChain:
+
+```python
+import asyncio
+from langchain.memory import ConversationBufferMemory
+from langchain_openai import ChatOpenAI
+from langchain.agents import AgentType, initialize_agent
+from paylink_sdk.langchain_adapter.toolkit import PayLinkClient
+
+async def chat_interface():
+    # Initialize the PayLink client
+    paylink_client = PayLinkClient()
+    
+    # Get PayLink tools
+    tools = await paylink_client.list_tools()
+    
+    # Set up memory
+    memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+    
+    # Initialize the LLM
+    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+    
+    # Create the agent
+    agent = initialize_agent(
+        tools=tools,
+        llm=llm,
+        agent=AgentType.OPENAI_FUNCTIONS,
+        memory=memory,
+        verbose=True
+    )
+    
+    print("Payment Chat Assistant (type 'exit' to quit)")
+    print("-------------------------------------------")
+    
+    while True:
+        # Get user input
+        user_input = input("\nYou: ")
+        
+        if user_input.lower() == 'exit':
+            print("Goodbye!")
+            break
+        
+        # Process user input
+        try:
+            response = await agent.ainvoke({"input": user_input})
+            print(f"\nAssistant: {response['output']}")
+        except Exception as e:
+            print(f"\nError: {str(e)}")
+
+if __name__ == "__main__":
+    asyncio.run(chat_interface())
+```
+
+## Error Handling
+
+When integrating with payment systems, proper error handling is essential:
+
+```python
+try:
+    result = await paylink_client.call_tool(tool_name, tool_input)
+    # Process successful payment
+except Exception as e:
+    # Handle payment failure
+    error_message = str(e)
+    print(f"Payment failed: {error_message}")
+    
+    # Return error information to the agent
+    return {"error": error_message}
+```
+
+
+
+## Next Steps
+
+Now that you've integrated PayLink with LangChain, you can:
+
+- Create more complex agents with multiple tools
+- Implement conversational memory for payment history
+- Build multi-step payment workflows
+- Add user authentication and authorization
+
+Check out our [OpenAI integration guide](/ai-integration/openai) for an alternative approach to AI-powered payments.
+
+## Troubleshooting
+
+**Tool Execution Error**: If you receive an error during tool execution, ensure that:
+- The PayLink server is running and accessible
+- You're correctly parsing the tool input
+- Your PayLink SDK is up to date
+
+**Agent Not Using Tools**: If the agent isn't using the PayLink tools:
+- Check that the tools were properly bound to the LLM
+- Make sure the user request clearly indicates a payment action
+- Try adjusting the system prompt to emphasize payment capabilities
+
+For more assistance, refer to our [troubleshooting guide](/get-started/troubleshooting) or contact support.

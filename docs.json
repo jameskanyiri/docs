@@ -16,19 +16,17 @@
         "groups": [
           {
             "group": "Get Started",
-            "pages": [
-              "index",
-              "get-started/quickstart"
-            ]
+            "pages": ["index", "get-started/quickstart"]
           },
           {
-            "group": "Integration Guides",
+            "group": "AI Framework Integration",
             "pages": [
-              "integration-guides/openai",
-              "integration-guides/langchain",
-              "integration-guides/custom-tools"
+              "ai-integration/overview",
+              "ai-integration/openai",
+              "ai-integration/langchain"
             ]
           },
+
           {
             "group": "Development",
             "pages": [
@@ -50,25 +48,18 @@
       ]
     }
   },
- 
+
   "navbar": {
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "mailto:jmskanyiri@gmail.com"
       }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
-    }
+    ]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "github": "https://github.com/jameskanyiri/paylink_sdk"
     }
   }
 }

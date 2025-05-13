@@ -1,0 +1,65 @@
+---
+title: 'Overview'
+description: 'Integrate PayLink with popular AI frameworks for payment-enabled agents'
+---
+
+# AI Framework Integration
+
+PayLink can be integrated with various AI frameworks, allowing you to create AI agents that can process payments as part of their workflows. This gives your AI applications the ability to handle real-world transactions seamlessly.
+
+## Supported Frameworks
+
+PayLink currently supports integration with the following AI frameworks:
+
+<CardGroup cols={2}>
+  <Card title="OpenAI" icon="openai" href="/ai-integration/openai">
+    Integrate PayLink with OpenAI's function calling API to enable payment processing in conversational AI applications.
+  </Card>
+  <Card title="LangChain" icon="link-simple" href="/ai-integration/langchain">
+    Use PayLink as a custom tool in LangChain agents for building complex payment-enabled AI workflows.
+  </Card>
+</CardGroup>
+
+## Key Integration Benefits
+
+Integrating PayLink with AI frameworks offers several advantages:
+
+- **Seamless Payment Experience**: Allow users to make payments without leaving your AI application
+- **Contextual Transactions**: AI can understand the payment context from the conversation
+- **Automated Workflows**: Build end-to-end processes that include payment steps
+- **Enhanced User Experience**: Provide a cohesive interface that handles both conversation and payments
+
+## Integration Architecture
+
+When integrating PayLink with an AI framework, the typical architecture follows this pattern:
+
+```mermaid
+graph LR
+    User[User] <--> AI[AI Framework]
+    AI <--> PayLinkSDK[PayLink SDK]
+    PayLinkSDK <--> PayLinkServer[PayLink Server]
+    PayLinkServer <--> PaymentProviders[Payment Providers]
+```
+
+The AI framework handles user interactions and determines when a payment is needed. It then calls the appropriate PayLink function through the SDK, which communicates with the PayLink server to process the payment with the selected payment provider.
+
+## Getting Started
+
+To get started with AI framework integration:
+
+1. **Set up PayLink SDK**: Follow the [quickstart guide](/get-started/quickstart) to install and initialize the SDK
+2. **Choose your framework**: Select the AI framework you want to integrate with
+3. **Follow the framework-specific guide**: Use our detailed guides for [OpenAI](/ai-integration/openai) or [LangChain](/ai-integration/langchain) integration
+
+## Next Steps
+
+Select your preferred AI framework below to view detailed integration instructions:
+
+<CardGroup cols={2}>
+  <Card title="OpenAI Integration" icon="openai" href="/ai-integration/openai">
+    Step-by-step guide for integrating PayLink with OpenAI
+  </Card>
+  <Card title="LangChain Integration" icon="link-simple" href="/ai-integration/langchain">
+    Comprehensive instructions for using PayLink with LangChain agents
+  </Card>
+</CardGroup>

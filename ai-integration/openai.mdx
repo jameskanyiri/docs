@@ -1,0 +1,240 @@
+---
+title: 'OpenAI Integration'
+description: 'Integrate PayLink with OpenAI for payment-enabled AI assistants'
+---
+
+# OpenAI Integration
+
+This guide demonstrates how to integrate PayLink with OpenAI's models to create AI assistants that can process payments. The integration uses PayLink's OpenAI adapter, which formats PayLink tools to be compatible with OpenAI's function calling API.
+
+## Prerequisites
+
+Before you begin, make sure you have:
+
+- Installed the PayLink SDK
+- An OpenAI API key
+- Access to a PayLink server with payment tools
+
+## Installation
+
+Install the required packages:
+
+```bash
+pip install paylink-sdk openai
+```
+
+## Basic Integration
+
+### Step 1: Initialize the PayLink Client
+
+First, initialize the PayLink client using the OpenAI adapter:
+
+```python
+from paylink_sdk.openai_adapter.toolkit import PayLinkClient
+
+# Initialize the client
+paylink_client = PayLinkClient()
+
+# List available tools in OpenAI-compatible format
+tools = await paylink_client.list_tools()
+```
+
+The `PayLinkClient` from the `openai_adapter.toolkit` module automatically formats PayLink tools in a way that's compatible with OpenAI's function calling API.
+
+### Step 2: Set Up OpenAI Client
+
+Initialize the OpenAI client:
+
+```python
+from openai import OpenAI
+
+client = OpenAI(api_key="OPENAI_API_KEY")
+```
+
+### Step 3: Create a Conversation with Tool Calls
+
+Send a user message to OpenAI with the PayLink tools:
+
+```python
+input_message = [
+    {
+        "role": "user",
+        "content": "Initiate an stk push to 2547123456789 amount is 1ksh account reference invoice, transaction description invoice-123, transaction type CustomerBuyGoodsOnline"
+    }
+]
+
+# Get response with tool calls
+response = client.responses.create(
+    model="gpt-4o-mini",
+    input=input_message,
+    tools=tools
+)
+
+# View the response
+print(response.output)
+```
+
+The OpenAI model will analyze the user's request and generate a tool call to the appropriate PayLink function.
+
+### Step 4: Execute the PayLink Tool
+
+Once you have the tool call from OpenAI, you can execute it using the PayLink client:
+
+```python
+tool_args = {
+    "phone_number": "2547123456789",
+    "amount": 1,
+    "account_reference": "invoice",
+    "transaction_desc": "invoice-123",
+    "transaction_type": "CustomerBuyGoodsOnline",
+}
+
+result = await paylink_client.call_tool("stk_push", tool_args)
+
+# View the result
+print(result)
+```
+
+## Complete Example
+
+Here's a complete example showing how to create a payment-enabled chatbot using OpenAI and PayLink:
+
+```python
+import asyncio
+import json
+from openai import OpenAI
+from paylink_sdk.openai_adapter.toolkit import PayLinkClient
+
+async def main():
+    # Initialize clients
+    openai_client = OpenAI()
+    paylink_client = PayLinkClient()
+    
+    # Get PayLink tools in OpenAI format
+    tools = await paylink_client.list_tools()
+    
+    # User message requesting payment
+    messages = [
+        {
+            "role": "system",
+            "content": "You are a helpful assistant that can process mobile money payments when requested."
+        },
+        {
+            "role": "user",
+            "content": "I want to pay 1 KES from my phone number 2547123456789 for invoice number 123."
+        }
+    ]
+    
+    # Step 1: Get the initial response from OpenAI with tool calls
+    response = openai_client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=messages,
+        tools=tools
+    )
+    
+    assistant_message = response.choices[0].message
+    messages.append(assistant_message)
+    
+    # Step 2: Check if there's a tool call to process
+    if assistant_message.tool_calls:
+        # Process each tool call
+        for tool_call in assistant_message.tool_calls:
+            function_name = tool_call.function.name
+            function_args = json.loads(tool_call.function.arguments)
+            
+            # Execute the PayLink tool
+            tool_result = await paylink_client.call_tool(function_name, function_args)
+            
+            # Add the tool result to messages
+            messages.append({
+                "role": "tool",
+                "tool_call_id": tool_call.id,
+                "name": function_name,
+                "content": json.dumps(tool_result)
+            })
+        
+        # Step 3: Get the final response from OpenAI
+        final_response = openai_client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=messages
+        )
+        
+        print("Final response:", final_response.choices[0].message.content)
+    else:
+        print("No payment processing needed")
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+## Error Handling
+
+When integrating with payment systems, proper error handling is essential. Here's how to handle errors:
+
+```python
+try:
+    result = await paylink_client.call_tool("stk_push", tool_args)
+    # Process successful payment
+except Exception as e:
+    # Handle payment failure
+    error_message = str(e)
+    print(f"Payment failed: {error_message}")
+    
+    # Inform the user about the failure
+    messages.append({
+        "role": "system",
+        "content": f"The payment could not be processed: {error_message}"
+    })
+```
+
+## Tips for Effective Integration
+
+1. **System Instructions**: Include clear instructions in your system message about payment capabilities.
+
+2. **Validation**: Although OpenAI models can extract payment details, add validation before processing:
+   ```python
+   # Validate phone number format
+   if not phone_number.startswith("254") or len(phone_number) != 12:
+       raise ValueError("Invalid phone number format. Must be 12 digits starting with 254")
+       
+   # Validate amount
+   if amount <= 0:
+       raise ValueError("Amount must be greater than 0")
+   ```
+
+3. **User Confirmation**: For better user experience, confirm payment details before processing:
+   ```python
+   confirmation_message = f"I'll process a payment of {amount} KES from phone number {phone_number}. Is this correct?"
+   ```
+
+4. **Status Updates**: Keep the user informed about the payment status:
+   ```python
+   # Check payment status
+   status = await paylink_client.call_tool("stk_push_status", {
+       "checkout_request_id": result["CheckoutRequestID"]
+   })
+   ```
+
+## Next Steps
+
+Now that you've integrated PayLink with OpenAI, you can:
+
+- Explore other PayLink tools like checking payment status or refunds
+- Enhance your assistant with more complex payment workflows
+- Implement user authentication and authorization
+
+Check out our [LangChain integration guide](/ai-integration/langchain) for an alternative approach to AI-powered payments.
+
+## Troubleshooting
+
+**Tool Not Found Error**: If you receive a "Tool not found" error, ensure that:
+- The PayLink server is running and accessible
+- You're using the correct tool name (case-sensitive)
+- Your PayLink SDK is up to date
+
+**Payment Failed Error**: If the payment fails, check:
+- The phone number is in the correct format (e.g., 254XXXXXXXXX)
+- The amount is within acceptable limits
+- The PayLink server can connect to the payment provider
+
+For more assistance, refer to our [troubleshooting guide](/get-started/troubleshooting) or contact support.
