@@ -30,8 +30,7 @@
           {
             "group": "Development",
             "pages": [
-              "development/whats-new",
-              "development/roadmap"
+              "development/whats-new"
             ]
           }
         ]
